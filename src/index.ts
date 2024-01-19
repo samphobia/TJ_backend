@@ -1,8 +1,11 @@
 import * as dotenv from 'dotenv';
 import express from 'express';
 import connectToMongoDB from './config/db';
+import bookRoutes from './routes/book';
 
 const app = express();
+
+app.use(bookRoutes);
 
 dotenv.config();
 
