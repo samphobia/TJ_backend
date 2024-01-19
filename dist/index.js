@@ -31,9 +31,9 @@ const express_1 = __importDefault(require("express"));
 const db_1 = __importDefault(require("./config/db"));
 const book_1 = __importDefault(require("./routes/book"));
 const app = (0, express_1.default)();
-app.use(book_1.default);
 dotenv.config();
 app.use(express_1.default.json());
+app.use('/api/books', book_1.default);
 const port = process.env.PORT;
 const startServer = async () => {
     try {

@@ -5,11 +5,13 @@ import bookRoutes from './routes/book';
 
 const app = express();
 
-app.use(bookRoutes);
+
 
 dotenv.config();
 
 app.use(express.json());
+
+app.use('/api/books',bookRoutes);
 
 const port: string = (process.env.PORT as string);
 
