@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import connectToMongoDB from './config/db';
 import bookRoutes from './routes/book';
+import cors from "cors";
 
 const app = express();
 
@@ -10,6 +11,7 @@ const app = express();
 dotenv.config();
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/api/books',bookRoutes);
 
