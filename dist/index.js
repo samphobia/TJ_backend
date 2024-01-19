@@ -47,9 +47,9 @@ const app = (0, express_1.default)();
 dotenv.config();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-app.use(errorHandler_1.errorHandlerMiddleware);
 app.use('/api/books', book_1.default);
 app.use('/api/auth', auth_1.default);
+app.use(errorHandler_1.errorHandlerMiddleware);
 app.get('/example-error', (req, res, next) => {
     next(new customeError_1.CustomError('Example error', 500));
 });

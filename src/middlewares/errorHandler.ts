@@ -1,15 +1,41 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '../utils/customeError';
+
+// class CustomError extends Error {
+//   statusCode: number;
+
+//   constructor(message: string, statusCode: number) {
+//     super(message);
+//     this.statusCode = statusCode;
+//   }
+// }
 
 export const errorHandlerMiddleware = (
-  err: Error,
+  err: CustomError | Error,
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction
 ): void => {
-  console.error(err.stack);
+  if (err instanceof CustomError) {
+    console.error(`Custom Error: ${err.message}, Status: ${err.status}`);
 
-  res.status(500).json({
-    error: 'Internal Server Error',
-  });
+    // Respond to the client with the error details
+    res.status(err.status).json({
+      success: false,
+      status: err.status,
+      message: err.message,
+    });
+  } else {
+    // Handle other types of errors
+    console.error(`Unexpected Error: ${err.message}`);
+
+    // Respond to the client with a generic error message
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: 'Internal Server Error',
+    });
+  }
 };
+

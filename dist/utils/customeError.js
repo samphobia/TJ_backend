@@ -6,6 +6,13 @@ class CustomError extends Error {
         super(message);
         this.status = status;
     }
+    toJSON() {
+        return {
+            success: false,
+            status: this.status,
+            message: this.message,
+        };
+    }
 }
 exports.CustomError = CustomError;
 //# sourceMappingURL=customeError.js.map

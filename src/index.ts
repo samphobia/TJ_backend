@@ -15,10 +15,12 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cors());
-app.use(errorHandlerMiddleware);
+
 
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', authRoutes);
+
+app.use(errorHandlerMiddleware);
 
 app.get('/example-error', (req, res, next) => {
   next(new CustomError('Example error', 500));

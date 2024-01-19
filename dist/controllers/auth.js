@@ -17,6 +17,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
 const customeError_1 = require("../utils/customeError");
+const errorHandler_1 = require("../middlewares/errorHandler");
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
 // User registration
@@ -60,12 +61,12 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Find user by email
         const user = yield User_1.default.findOne({ email });
         if (!user) {
-            throw new customeError_1.CustomError('Invalid credentials', 401);
+            throw new customeError_1.CustomError('No User found', 401);
         }
         // Check if the provided password matches the stored hashed password
         const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
-            throw new customeError_1.CustomError('Invalid credentials', 401);
+            throw new customeError_1.CustomError('you entered wrong password', 401);
         }
         // Generate JWT token
         const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, jwtSecret, {
@@ -74,21 +75,27 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).json({ token, user });
     }
     catch (error) {
-        next(error);
+        (0, errorHandler_1.errorHandlerMiddleware)(error, req, res, () => { });
     }
 });
 exports.loginUser = loginUser;
 const getLoggedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Assuming you have middleware to extract the user from the token
-        const loggedUser = req.user;
-        if (!loggedUser) {
-            res.status(401).json({
-                message: 'Unauthorized',
-            });
+        const userId = req.headers['user-id'];
+        const userRole = req.headers['user-role'];
+        // Validate that userId and userRole are present
+        if (!userId || !userRole) {
+            res.status(401).json({ message: 'Unauthorized: User ID or Role not provided in headers' });
             return;
         }
-        res.status(200).json({ user: loggedUser });
+        // Assuming you have a middleware that verifies user roles, you can add additional checks here
+        // Fetch the user from the database based on userId
+        const user = yield User_1.default.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        res.status(200).json(user);
     }
     catch (error) {
         console.error(error);
@@ -97,7 +104,7 @@ const getLoggedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.getLoggedUser = getLoggedUser;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-function next(error) {
-    throw new Error('Function not implemented.');
-}
+// function next(error: any) {
+//   throw new Error('Function not implemented.');
+// }
 //# sourceMappingURL=auth.js.map
