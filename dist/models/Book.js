@@ -23,6 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// models/book.ts
 const mongoose_1 = __importStar(require("mongoose"));
 const KeyContentSchema = new mongoose_1.Schema({
     image: { type: String, required: true },

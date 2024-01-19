@@ -22,17 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-// routes/bookRoutes.ts
-const express_1 = __importDefault(require("express"));
-const bookController = __importStar(require("../controllers/book"));
-const router = express_1.default.Router();
-router.post('/books', bookController.createBook);
-router.get('/books', bookController.getAllBooks);
-router.get('/books/:id', bookController.getBookById);
-router.put('/books/:id', bookController.updateBook);
-exports.default = router;
-//# sourceMappingURL=book.js.map
+// models/user.ts
+const mongoose_1 = __importStar(require("mongoose"));
+const UserSchema = new mongoose_1.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ['admin', 'superadmin', 'user'], default: 'user' },
+});
+const UserModel = mongoose_1.default.model('User', UserSchema);
+exports.default = UserModel;
+//# sourceMappingURL=User.js.map

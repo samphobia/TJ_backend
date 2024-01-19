@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import UserModel, { IUser } from '../models/User';
+import { CustomError } from '../utils/customeError';
 
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
@@ -63,20 +64,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      res.status(401).json({
-        message: 'Invalid credentials',
-      });
-      return;
+      throw new CustomError('Invalid credentials', 401);
     }
 
     // Check if the provided password matches the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({
-        message: 'Invalid credentials',
-      });
-      return;
+      throw new CustomError('Invalid credentials', 401);
     }
 
     // Generate JWT token
@@ -86,8 +81,32 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({ token, user });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'login failed' });
+    next(error);
   }
 };
+
+export const getLoggedUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Assuming you have middleware to extract the user from the token
+    const loggedUser = req.user as unknown as IUser;
+
+    if (!loggedUser) {
+      res.status(401).json({
+        message: 'Unauthorized',
+      });
+      return;
+    }
+
+    res.status(200).json({ user: loggedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+function next(error: any) {
+  throw new Error('Function not implemented.');
+}
 
