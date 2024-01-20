@@ -4,8 +4,8 @@ import { authenticateJWT, authenticateUser } from '../middlewares/auth';
 
 const router = express.Router();
 
-router.post('/register', authenticateUser(['admin']), authenticateJWT, authController.registerUser);
+router.post('/register', authController.registerUser);
 router.post('/login', authController.loginUser);
-router.get('/getlogged', authController.getLoggedUser);
+router.get('/getlogged',authenticateUser(['admin']), authenticateJWT, authController.getLoggedUser);
 
 export default router;

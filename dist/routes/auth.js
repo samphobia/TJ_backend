@@ -30,8 +30,8 @@ const express_1 = __importDefault(require("express"));
 const authController = __importStar(require("../controllers/auth"));
 const auth_1 = require("../middlewares/auth");
 const router = express_1.default.Router();
-router.post('/register', (0, auth_1.authenticateUser)(['admin']), auth_1.authenticateJWT, authController.registerUser);
+router.post('/register', authController.registerUser);
 router.post('/login', authController.loginUser);
-router.get('/getlogged', authController.getLoggedUser);
+router.get('/getlogged', (0, auth_1.authenticateUser)(['admin']), auth_1.authenticateJWT, authController.getLoggedUser);
 exports.default = router;
 //# sourceMappingURL=auth.js.map
