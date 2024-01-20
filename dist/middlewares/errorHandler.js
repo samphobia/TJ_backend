@@ -2,13 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandlerMiddleware = void 0;
 const customeError_1 = require("../utils/customeError");
-// class CustomError extends Error {
-//   statusCode: number;
-//   constructor(message: string, statusCode: number) {
-//     super(message);
-//     this.statusCode = statusCode;
-//   }
-// }
 const errorHandlerMiddleware = (err, req, res, 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 next) => {

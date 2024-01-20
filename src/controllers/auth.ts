@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import UserModel, { IUser } from '../models/User';
 import { CustomError } from '../utils/customeError';
 import { errorHandlerMiddleware } from '../middlewares/errorHandler';
+import { validateEmail, validatePassword } from '../middlewares/validator';
 
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
@@ -19,13 +20,18 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       role: 'admin' | 'superadmin' | 'user';
     };
 
+    if (!validateEmail(email)) {
+      throw new CustomError('Enter a valid email', 404);
+    }
+
+    if (!validatePassword(password)) {
+      throw new CustomError('password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character', 404);
+    }
+
     const existingUser = await UserModel.findOne({ email });
 
     if (existingUser) {
-      res.status(409).json({
-        message: 'User with this email already exists',
-      });
-      return;
+      throw new CustomError('User with this email already exist', 409);
     }
 
     // Ensure types are correctly inferred
@@ -49,8 +55,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 
     res.status(201).json({ token, user: createdUser });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    errorHandlerMiddleware(error, req, res, () => {});
   }
 };
 
@@ -61,11 +66,15 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       password: string;
     };
 
+    if (!validateEmail(email)) {
+      throw new CustomError('Enter a valid email', 404);
+    }
+
     // Find user by email
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      throw new CustomError('No User found', 401);
+      throw new CustomError('No User found', 404);
     }
 
     // Check if the provided password matches the stored hashed password
@@ -94,8 +103,7 @@ export const getLoggedUser = async (req: Request, res: Response): Promise<void> 
 
     // Validate that userId and userRole are present
     if (!userId || !userRole) {
-      res.status(401).json({ message: 'Unauthorized: User ID or Role not provided in headers' });
-      return;
+      throw new CustomError('Unauthorized: User ID or Role not provided in headers', 401);
     }
 
     // Assuming you have a middleware that verifies user roles, you can add additional checks here
@@ -104,20 +112,12 @@ export const getLoggedUser = async (req: Request, res: Response): Promise<void> 
     const user = await UserModel.findById(userId);
 
     if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
+      throw new CustomError('No User found', 404);
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    errorHandlerMiddleware(error, req, res, () => {});
   }
 };
-
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-// function next(error: any) {
-//   throw new Error('Function not implemented.');
-// }
 

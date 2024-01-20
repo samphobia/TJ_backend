@@ -18,18 +18,22 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
 const customeError_1 = require("../utils/customeError");
 const errorHandler_1 = require("../middlewares/errorHandler");
+const validator_1 = require("../middlewares/validator");
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
 // User registration
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password, role } = req.body;
+        if (!(0, validator_1.validateEmail)(email)) {
+            throw new customeError_1.CustomError('Enter a valid email', 404);
+        }
+        if (!(0, validator_1.validatePassword)(password)) {
+            throw new customeError_1.CustomError('password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character', 404);
+        }
         const existingUser = yield User_1.default.findOne({ email });
         if (existingUser) {
-            res.status(409).json({
-                message: 'User with this email already exists',
-            });
-            return;
+            throw new customeError_1.CustomError('User with this email already exist', 409);
         }
         // Ensure types are correctly inferred
         const newUser = new User_1.default({
@@ -50,18 +54,20 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(201).json({ token, user: createdUser });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        (0, errorHandler_1.errorHandlerMiddleware)(error, req, res, () => { });
     }
 });
 exports.registerUser = registerUser;
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
+        if (!(0, validator_1.validateEmail)(email)) {
+            throw new customeError_1.CustomError('Enter a valid email', 404);
+        }
         // Find user by email
         const user = yield User_1.default.findOne({ email });
         if (!user) {
-            throw new customeError_1.CustomError('No User found', 401);
+            throw new customeError_1.CustomError('No User found', 404);
         }
         // Check if the provided password matches the stored hashed password
         const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
@@ -85,26 +91,19 @@ const getLoggedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const userRole = req.headers['user-role'];
         // Validate that userId and userRole are present
         if (!userId || !userRole) {
-            res.status(401).json({ message: 'Unauthorized: User ID or Role not provided in headers' });
-            return;
+            throw new customeError_1.CustomError('Unauthorized: User ID or Role not provided in headers', 401);
         }
         // Assuming you have a middleware that verifies user roles, you can add additional checks here
         // Fetch the user from the database based on userId
         const user = yield User_1.default.findById(userId);
         if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
+            throw new customeError_1.CustomError('No User found', 404);
         }
         res.status(200).json(user);
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        (0, errorHandler_1.errorHandlerMiddleware)(error, req, res, () => { });
     }
 });
 exports.getLoggedUser = getLoggedUser;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-// function next(error: any) {
-//   throw new Error('Function not implemented.');
-// }
 //# sourceMappingURL=auth.js.map

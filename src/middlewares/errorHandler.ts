@@ -1,15 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { CustomError } from '../utils/customeError';
 
-// class CustomError extends Error {
-//   statusCode: number;
-
-//   constructor(message: string, statusCode: number) {
-//     super(message);
-//     this.statusCode = statusCode;
-//   }
-// }
-
 export const errorHandlerMiddleware = (
   err: CustomError | Error,
   req: Request,
