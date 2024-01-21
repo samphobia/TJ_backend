@@ -6,6 +6,7 @@ import UserModel, { IUser } from '../models/User';
 import { CustomError } from '../utils/customeError';
 import { errorHandlerMiddleware } from '../middlewares/errorHandler';
 import { validateEmail, validatePassword } from '../middlewares/validator';
+import { invalidateToken } from "../middlewares/auth";
 
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
@@ -55,7 +56,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 
     res.status(201).json({ token, user: createdUser });
   } catch (error) {
-    errorHandlerMiddleware(error, req, res, () => {});
+    errorHandlerMiddleware(error, req, res, () => { });
   }
 };
 
@@ -91,9 +92,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({ token, user });
   } catch (error) {
-    errorHandlerMiddleware(error, req, res, () => {});
+    errorHandlerMiddleware(error, req, res, () => { });
   }
-  
+
 };
 
 export const getLoggedUser = async (req: Request, res: Response): Promise<void> => {
@@ -117,7 +118,26 @@ export const getLoggedUser = async (req: Request, res: Response): Promise<void> 
 
     res.status(200).json(user);
   } catch (error) {
-    errorHandlerMiddleware(error, req, res, () => {});
+    errorHandlerMiddleware(error, req, res, () => { });
+  }
+};
+
+export const logout = (req: Request, res: Response): void => {
+  try {
+    const userToken: string | undefined = req.headers['authorization']?.split(' ')[1];
+    if (userToken) {
+      invalidateToken(userToken);
+    }
+
+    res.cookie("token", "none", {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true,
+    });
+
+    res.status(200).json({ message: 'Logout successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
