@@ -6,7 +6,7 @@ import UserModel, { IUser } from '../models/User';
 import { CustomError } from '../utils/customeError';
 import { errorHandlerMiddleware } from '../middlewares/errorHandler';
 import { validateEmail, validatePassword } from '../middlewares/validator';
-import { invalidateToken } from "../middlewares/auth";
+import { generateJWTToken, invalidateToken } from "../middlewares/auth";
 
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
@@ -85,10 +85,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       throw new CustomError('you entered wrong password', 401);
     }
 
+    const userId = user._id;
+    const userRole = user.role;
+
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id, role: user.role }, jwtSecret, {
-      expiresIn: '1h', // Token expiration time
-    });
+    const token = generateJWTToken(userId, userRole);
 
     res.status(200).json({ token, user });
   } catch (error) {

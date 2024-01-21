@@ -27,12 +27,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const authController = __importStar(require("../controllers/auth"));
+const authController = __importStar(require("../controllers/blog"));
 const auth_1 = require("../middlewares/auth");
 const router = express_1.default.Router();
-router.post('/register', authController.registerUser);
-router.post('/login', authController.loginUser);
-router.get('/getlogged', (0, auth_1.authenticateUser)(['admin']), auth_1.authenticateJWT, authController.getLoggedUser);
-router.post('/logout', auth_1.authenticateJWT, authController.logout);
+router.post('/', auth_1.authenticateJWT, authController.createBlog);
 exports.default = router;
-//# sourceMappingURL=auth.js.map
+//# sourceMappingURL=blog.js.map

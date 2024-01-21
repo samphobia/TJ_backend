@@ -22,17 +22,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const authController = __importStar(require("../controllers/auth"));
-const auth_1 = require("../middlewares/auth");
-const router = express_1.default.Router();
-router.post('/register', authController.registerUser);
-router.post('/login', authController.loginUser);
-router.get('/getlogged', (0, auth_1.authenticateUser)(['admin']), auth_1.authenticateJWT, authController.getLoggedUser);
-router.post('/logout', auth_1.authenticateJWT, authController.logout);
-exports.default = router;
-//# sourceMappingURL=auth.js.map
+// models/blog.ts
+const mongoose_1 = __importStar(require("mongoose"));
+const BlogSchema = new mongoose_1.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    image: { type: String, required: true },
+    description: { type: String, required: true },
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    comments: [
+        {
+            text: { type: String, required: true },
+            user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+        },
+    ],
+    ratings: [
+        {
+            user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+            stars: { type: Number, required: true },
+        },
+    ],
+});
+const BlogModel = mongoose_1.default.model('Blog', BlogSchema);
+exports.default = BlogModel;
+//# sourceMappingURL=Blog.js.map

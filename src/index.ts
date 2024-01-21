@@ -3,6 +3,7 @@ import express from 'express';
 import connectToMongoDB from './config/db';
 import bookRoutes from './routes/book';
 import authRoutes from './routes/auth';
+import blogRoutes from './routes/blog';
 import { errorHandlerMiddleware } from './middlewares/errorHandler';
 import { CustomError } from './utils/customeError';
 import cors from "cors";
@@ -19,6 +20,7 @@ app.use(cors());
 
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/blog', blogRoutes);
 
 app.use(errorHandlerMiddleware);
 

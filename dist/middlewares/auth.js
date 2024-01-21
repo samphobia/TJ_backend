@@ -14,23 +14,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.invalidateToken = exports.generateJWTToken = exports.authenticateUser = exports.authenticateJWT = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+// export const authenticateJWT = (req: Request, res: Response, next: NextFunction): void => {
+//   try {
+//     const token = req.headers.authorization?.split(' ')[1];
+//     if (!token) {
+//       res.status(401).json({ message: 'Unauthorized: Token not provided' });
+//       return;
+//     }
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string; userRole: string };
+//     // Attach userId and role to the request object for further use in controllers
+//     req.user = { userId: decoded.userId, userRole: decoded.userRole } as AuthenticatedUserData; 
+//     next();
+//   } catch (error) {
+//     console.error(error);
+//     res.status(403).json({ message: 'Forbidden: Invalid token' });
+//   }
+// };
 const authenticateJWT = (req, res, next) => {
     var _a;
-    try {
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
-        if (!token) {
-            res.status(401).json({ message: 'Unauthorized: Token not provided' });
-            return;
+    const token = (_a = req.header('Authorization')) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Unauthorized - Missing token' });
+    }
+    jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ success: false, message: 'Unauthorized - Invalid token' });
         }
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        // Attach userId and role to the request object for further use in controllers
-        req.user = { userId: decoded.userId, userRole: decoded.userRole };
+        req.user = decoded;
         next();
-    }
-    catch (error) {
-        console.error(error);
-        res.status(403).json({ message: 'Forbidden: Invalid token' });
-    }
+    });
 };
 exports.authenticateJWT = authenticateJWT;
 const authenticateUser = (allowedRoles) => {
@@ -60,11 +72,15 @@ const authenticateUser = (allowedRoles) => {
     });
 };
 exports.authenticateUser = authenticateUser;
-const generateJWTToken = (user) => {
-    const secret = process.env.JWT_SECRET;
-    return jsonwebtoken_1.default.sign({ sub: user._id, username: user.name, role: user.role }, secret, {
-        expiresIn: '1h', // Token expiration time (adjust as needed)
-    });
+const generateJWTToken = (userId, userRole) => {
+    if (!userId || !userRole) {
+        throw new Error('userId and userRole are required for generating JWT token');
+    }
+    // Set the expiration time for the token
+    const expiresIn = '1h';
+    // Generate the JWT token
+    const token = jsonwebtoken_1.default.sign({ userId, userRole }, process.env.JWT_SECRET, { expiresIn });
+    return token;
 };
 exports.generateJWTToken = generateJWTToken;
 const invalidatedTokens = new Set();

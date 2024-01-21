@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLoggedUser = exports.loginUser = exports.registerUser = void 0;
+exports.logout = exports.getLoggedUser = exports.loginUser = exports.registerUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
 const customeError_1 = require("../utils/customeError");
 const errorHandler_1 = require("../middlewares/errorHandler");
 const validator_1 = require("../middlewares/validator");
+const auth_1 = require("../middlewares/auth");
 const saltRounds = 10;
 const jwtSecret = 'your-secret-key'; // Replace with your secret key
 // User registration
@@ -74,10 +75,10 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!isPasswordValid) {
             throw new customeError_1.CustomError('you entered wrong password', 401);
         }
+        const userId = user._id;
+        const userRole = user.role;
         // Generate JWT token
-        const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, jwtSecret, {
-            expiresIn: '1h', // Token expiration time
-        });
+        const token = (0, auth_1.generateJWTToken)(userId, userRole);
         res.status(200).json({ token, user });
     }
     catch (error) {
@@ -106,4 +107,23 @@ const getLoggedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getLoggedUser = getLoggedUser;
+const logout = (req, res) => {
+    var _a;
+    try {
+        const userToken = (_a = req.headers['authorization']) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+        if (userToken) {
+            (0, auth_1.invalidateToken)(userToken);
+        }
+        res.cookie("token", "none", {
+            expires: new Date(Date.now() + 10 * 1000),
+            httpOnly: true,
+        });
+        res.status(200).json({ message: 'Logout successful' });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+exports.logout = logout;
 //# sourceMappingURL=auth.js.map
