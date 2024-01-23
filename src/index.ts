@@ -37,7 +37,7 @@ const startServer = async () => {
     // Additional setup or routes can be added here
 
     app.get('/', (req, res) => {
-      res.send('Blackhole EMS');
+      res.send('Blackhole API');
     });
 
     app.listen(port, () => {

@@ -61,7 +61,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, db_1.default)();
         // Additional setup or routes can be added here
         app.get('/', (req, res) => {
-            res.send('Blackhole EMS');
+            res.send('Blackhole API');
         });
         app.listen(port, () => {
             console.log(`Express is listening at http://localhost:${port}`);

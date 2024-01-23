@@ -31,5 +31,9 @@ const authController = __importStar(require("../controllers/blog"));
 const auth_1 = require("../middlewares/auth");
 const router = express_1.default.Router();
 router.post('/', auth_1.authenticateJWT, authController.createBlog);
+router.post('/comment', auth_1.authenticateJWT, authController.addComment);
+router.post('/rating', auth_1.authenticateJWT, authController.addRating);
+router.get('/blogs', authController.getAllBlogs);
+router.get('/blogs/:blogId', authController.getBlogById);
 exports.default = router;
 //# sourceMappingURL=blog.js.map
