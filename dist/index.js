@@ -41,6 +41,7 @@ const db_1 = __importDefault(require("./config/db"));
 const book_1 = __importDefault(require("./routes/book"));
 const auth_1 = __importDefault(require("./routes/auth"));
 const blog_1 = __importDefault(require("./routes/blog"));
+const donations_1 = __importDefault(require("./routes/donations"));
 const errorHandler_1 = require("./middlewares/errorHandler");
 const customeError_1 = require("./utils/customeError");
 const cors_1 = __importDefault(require("cors"));
@@ -51,6 +52,7 @@ app.use((0, cors_1.default)());
 app.use('/api/books', book_1.default);
 app.use('/api/auth', auth_1.default);
 app.use('/api/blog', blog_1.default);
+app.use('/api/donation', donations_1.default);
 app.use(errorHandler_1.errorHandlerMiddleware);
 app.get('/example-error', (req, res, next) => {
     next(new customeError_1.CustomError('Example error', 500));
