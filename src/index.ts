@@ -6,6 +6,7 @@ import authRoutes from './routes/auth';
 import blogRoutes from './routes/blog';
 import donationRoutes from './routes/donations';
 import consultRoutes from './routes/consult';
+import counsellRoutes from './routes/counselling';
 import { errorHandlerMiddleware } from './middlewares/errorHandler';
 import { CustomError } from './utils/customeError';
 import cors from "cors";
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/donation', donationRoutes);
 app.use('/api/consult', consultRoutes);
+app.use('/api/counsell', counsellRoutes);
 
 app.use(errorHandlerMiddleware);
 
