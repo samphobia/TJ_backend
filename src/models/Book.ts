@@ -2,9 +2,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 interface IKeyContent {
-  image: string;
-  title: string;
-  text: string;
+  bk_image: string;
+  bk_title: string;
+  bk_text: string;
 }
 
 export interface IBook extends Document {
@@ -23,9 +23,9 @@ export interface IBook extends Document {
 }
 
 const KeyContentSchema = new Schema({
-  image: { type: String, required: true },
-  title: { type: String, required: true },
-  text: { type: String, required: true },
+  bk_image: { type: String, required: true },
+  bk_title: { type: String, required: true },
+  bk_text: { type: String, required: true },
 });
 
 const BookSchema = new Schema<IBook>({

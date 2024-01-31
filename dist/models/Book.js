@@ -26,9 +26,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // models/book.ts
 const mongoose_1 = __importStar(require("mongoose"));
 const KeyContentSchema = new mongoose_1.Schema({
-    image: { type: String, required: true },
-    title: { type: String, required: true },
-    text: { type: String, required: true },
+    bk_image: { type: String, required: true },
+    bk_title: { type: String, required: true },
+    bk_text: { type: String, required: true },
 });
 const BookSchema = new mongoose_1.Schema({
     image: { type: String, required: true },
