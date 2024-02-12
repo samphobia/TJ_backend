@@ -8,12 +8,12 @@ import { validateEmail } from '../middlewares/validator';
 // Create a new consultation
 export const createConsultation = async (req: Request, res: Response) => {
   try {
-    const { name, email, question } = req.body;
+    const { name, email, message } = req.body;
 
     const newConsultation: IConsultation = new ConsultationModel ({
       name,
       email,
-      question,
+      message,
     });
 
     if (!validateEmail(email)) {

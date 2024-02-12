@@ -20,11 +20,11 @@ const validator_1 = require("../middlewares/validator");
 // Create a new consultation
 const createConsultation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, email, question } = req.body;
+        const { name, email, message } = req.body;
         const newConsultation = new Consult_1.default({
             name,
             email,
-            question,
+            message,
         });
         if (!(0, validator_1.validateEmail)(email)) {
             throw new customeError_1.CustomError('Enter a valid email', 404);

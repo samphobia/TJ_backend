@@ -23,13 +23,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// models/consultation.ts
+// models/book.ts
 const mongoose_1 = __importStar(require("mongoose"));
-const ConsultationSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    message: { type: String, required: true },
+const BooksLSchema = new mongoose_1.Schema({
+    title: { type: String, required: true },
+    author: { type: String, required: true },
+    content: { type: Buffer, required: true },
 });
-const ConsultationModel = mongoose_1.default.model('Consultation', ConsultationSchema);
-exports.default = ConsultationModel;
-//# sourceMappingURL=Consult.js.map
+const BooksLModel = mongoose_1.default.model('BooksL', BooksLSchema);
+exports.default = BooksLModel;
+//# sourceMappingURL=BookLaunch.js.map

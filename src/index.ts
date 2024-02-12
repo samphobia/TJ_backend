@@ -9,6 +9,7 @@ import consultRoutes from './routes/consult';
 import counsellRoutes from './routes/counselling';
 import connectRoutes from './routes/connect';
 import messageRoutes from './routes/messages';
+import bookLRoutes from './routes/bookLaunch';
 import { errorHandlerMiddleware } from './middlewares/errorHandler';
 import { CustomError } from './utils/customeError';
 import cors from "cors";
@@ -31,6 +32,7 @@ app.use('/api/consult', consultRoutes);
 app.use('/api/counsell', counsellRoutes);
 app.use('/api/connect', connectRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/bookL', bookLRoutes);
 
 app.use(errorHandlerMiddleware);
 

@@ -46,6 +46,7 @@ const consult_1 = __importDefault(require("./routes/consult"));
 const counselling_1 = __importDefault(require("./routes/counselling"));
 const connect_1 = __importDefault(require("./routes/connect"));
 const messages_1 = __importDefault(require("./routes/messages"));
+const bookLaunch_1 = __importDefault(require("./routes/bookLaunch"));
 const errorHandler_1 = require("./middlewares/errorHandler");
 const customeError_1 = require("./utils/customeError");
 const cors_1 = __importDefault(require("cors"));
@@ -61,6 +62,7 @@ app.use('/api/consult', consult_1.default);
 app.use('/api/counsell', counselling_1.default);
 app.use('/api/connect', connect_1.default);
 app.use('/api/messages', messages_1.default);
+app.use('/api/bookL', bookLaunch_1.default);
 app.use(errorHandler_1.errorHandlerMiddleware);
 app.get('/example-error', (req, res, next) => {
     next(new customeError_1.CustomError('Example error', 500));
